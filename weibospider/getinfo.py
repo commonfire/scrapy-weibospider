@@ -18,3 +18,11 @@ def get_user(username):
     username = base64.encodestring(username_)[:-1]
     return username 
 
+def get_followflag(filename):
+    flag = open(filename).readline()
+    return flag 
+
+def set_followflag(filename,newflag):
+    f = open(filename,'w')
+    f.write(newflag)
+    

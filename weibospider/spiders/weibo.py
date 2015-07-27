@@ -18,13 +18,13 @@ from settings import USER_NAME
 class WeiboSpider(CrawlSpider):
     name = 'weibo'
     allowed_domains = ['weibo.com','sina.com.cn']
-   # rules = (Rule(LinkExtractor(allow=r'Items/'), callback='parse_item', follow=True),)
     settings = get_project_settings()
     #start_username = settings['USER_NAME']
     start_username = USER_NAME
     start_password = settings['PASS_WORD']
     start_uid = settings['UID']
     page_num = settings['PAGE_NUM']
+    filename  = settings['FILENAME']
 
     def start_requests(self):
         username = WeiboSpider.start_username
@@ -78,12 +78,52 @@ class WeiboSpider(CrawlSpider):
         except:
             print 'Login Error!!!!'
 
-        request = response.request.replace(url=login_url,meta={'cookiejar':1},method='get',callback=self.start_getweiboinfo)   #GET请求login_url获取返回的cookie，后续发送Request携带此cookie
+        request = response.request.replace(url=login_url,meta={'cookiejar':1},method='get',callback=self.get_follow)   #GET请求login_url获取返回的cookie，后续发送Request携带此cookie
         return request
 
-    def start_getweiboinfo(self,response):   
-        mainpageurl = 'http://weibo.com/u/'+str(WeiboSpider.start_uid)+'?from=otherprofile&wvr=3.6&loc=tagweibo'
-        GetWeibopage.data['uid'] = WeiboSpider.start_uid
+
+    def get_url(self,uid):
+        '''获取入口uid的关注列表页面'''
+        url = 'http://weibo.com/p/100505' + str(uid) + '/myfollow?' 
+        return url
+
+    def get_follow(self,response):
+        formdata = {
+            'cfs':'',
+            't':'1',
+            'Pl_Official_RelationMyfollow__104_page':'1'   ######待讨论
+        }
+        uid = '2728266823'
+        follow_url = self.get_url(uid)
+        return [FormRequest(url=follow_url,formdata=formdata,meta={'cookiejar':response.meta['cookiejar']},callback=self.parse_follow)]
+
+    def parse_follow(self,response):
+        item = WeibospiderItem()
+        analyzer = Analyzer()
+        total_pq = analyzer.get_followhtml(response.body)
+        item['followuidlist'] = analyzer.get_follow(total_pq) 
+        oldflag = getinfo.get_followflag(WeiboSpider.filename)
+
+        for follow_uid in item['followuidlist']:
+            if follow_uid != oldflag:
+                mainpageurl = 'http://weibo.com/u/'+str(follow_uid)+'?from=otherprofile&wvr=3.6&loc=tagweibo'
+                GetWeibopage.data['uid'] = follow_uid
+                getweibopage = GetWeibopage()
+                for page in range(WeiboSpider.page_num):
+                    GetWeibopage.data['page'] = page+1
+                    firstloadurl = mainpageurl + getweibopage.get_firstloadurl()
+                    yield  Request(url=firstloadurl,meta={'cookiejar':response.meta['cookiejar']},callback=self.parse_firstload)
+            else:
+                break
+        getinfo.set_followflag(WeiboSpider.filename,item['followuidlist'][0])
+        #return item     
+
+
+    def start_getweiboinfo(self,response,follow_uid):
+        print 'adssssssssssssssssssssssssssssssssssssssssssssssssss'   
+        mainpageurl = 'http://weibo.com/u/'+str(follow_uid)+'?from=otherprofile&wvr=3.6&loc=tagweibo'
+        print '==========================',mainpageurl
+        GetWeibopage.data['uid'] = follow_uid
         getweibopage = GetWeibopage()
         for page in range(WeiboSpider.page_num): 
             GetWeibopage.data['page'] = page+1

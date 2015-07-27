@@ -159,4 +159,11 @@ class Analyzer:
         self.childfollow_list = self.get_follower(total_pq)
         return self.childfollow_list
 
+#########################################解析当前关注页面uid##########################################
+
+
+
+
+
+
 
