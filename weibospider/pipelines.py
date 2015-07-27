@@ -31,20 +31,20 @@ class WeibospiderPipeline(object):
         return cls(dbpool)
     
     def process_item(self,item,spider):
-        d = self.dbpool.runInteraction(self._content_time_insert,item,spider)  
+        d = self.dbpool.runInteraction(self._weiboinfo_insert,item,spider)  
         d.addErrback(self._handle_error,item,spider) 
         d.addBoth(lambda _:item)
         return d
 
-    def _content_time_insert(self,conn,item,spider):
+    def _weiboinfo_insert(self,conn,item,spider):
         '''插入发表微博内容和时间'''
-        if item.get('content') and item.get('time'):
-            for i in range(len(item['content'])):
-                if("'" in item['content'][i]):
-                    content_tmp = item['content'][i].replace("'","\\'")
-                    conn.execute("insert into t_user_weibo(userID,content,time) values(%s,%s,%s)",(str(2728266823),content_tmp,item['time'][i]))
-                else:
-                    conn.execute("insert into t_user_weibo(userID,content,time) values(%s,%s,%s)",(str(2728266823),item['content'][i],item['time'][i]))
+        #if item.get('content') and item.get('time'):
+        for i in range(len(item['content'])):
+            if("'" in item['content'][i]):
+                content_tmp = item['content'][i].replace("'","\\'")
+                conn.execute("insert into t_user_weibo(userID,content,time,atuser,repostuser) values(%s,%s,%s,%s,%s)",(str(2728266823),content_tmp,item['time'][i],item['atuser'][i],item['repostuser'][i]))
+            else:
+                conn.execute("insert into t_user_weibo(userID,content,time,atuser,repostuser) values(%s,%s,%s,%s,%s)",(str(2728266823),item['content'][i],item['time'][i],item['atuser'][i],item['repostuser'][i]))
 
     def _handle_error(self,failure,item,spider):
         logging.error(failure)

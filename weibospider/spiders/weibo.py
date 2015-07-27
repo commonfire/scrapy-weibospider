@@ -6,8 +6,6 @@ from scrapy.http import Request,FormRequest
 from scrapy.utils.project import get_project_settings
 from weibospider.items import WeibospiderItem
 import re
-import urllib
-import urllib2
 import base64
 import rsa
 import binascii
@@ -84,7 +82,6 @@ class WeiboSpider(CrawlSpider):
         return request
 
     def start_getweiboinfo(self,response):   
-        #yield Request()比如获取用户粉丝uid的请求
         mainpageurl = 'http://weibo.com/u/'+str(WeiboSpider.start_uid)+'?from=otherprofile&wvr=3.6&loc=tagweibo'
         GetWeibopage.data['uid'] = WeiboSpider.start_uid
         getweibopage = GetWeibopage()
@@ -105,25 +102,27 @@ class WeiboSpider(CrawlSpider):
         total_pq =  analyzer.get_mainhtml(response.body)
         item['content'] = analyzer.get_content(total_pq)
         item['time'] = analyzer.get_time(total_pq)
+        item['atuser'],item['repostuser'] = analyzer.get_atuser_repostuser(total_pq)
         return item
 
+
     def parse_secondload(self,response):
-        #time.sleep(2.5)
         item = WeibospiderItem()
         analyzer = Analyzer()
         total_pq =  analyzer.get_mainhtml(response.body)
         item['content'] = analyzer.get_content(total_pq)
         item['time'] = analyzer.get_time(total_pq)
+        item['atuser'],item['repostuser'] = analyzer.get_atuser_repostuser(total_pq)
         return item
 
 
     def parse_thirdload(self,response):
-        #time.sleep(2.5)
         item = WeibospiderItem()
         analyzer = Analyzer()
         total_pq =  analyzer.get_mainhtml(response.body)
         item['content'] = analyzer.get_content(total_pq)
         item['time'] = analyzer.get_time(total_pq)
+        item['atuser'],item['repostuser'] = analyzer.get_atuser_repostuser(total_pq)
         return item
 
         

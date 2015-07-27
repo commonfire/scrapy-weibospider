@@ -23,7 +23,7 @@ MYSQL_PASSWD = 'root'
 USER_NAME = '18611240462'
 PASS_WORD = '19911007'
 UID = '2728266823'
-PAGE_NUM = 2
+PAGE_NUM = 1
 
 
 USER_AGENTS = [
@@ -89,8 +89,8 @@ DOWNLOAD_DELAY=1.5
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'weibospider.middlewares.RotateUserAgent': 1,
-    'weibospider.middlewares.RotateHttpProxy': 100,
-    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':110
+    'weibospider.middlewares.RotateHttpProxy': None,  #100,
+    'scrapy.downloadermiddlewares.httpproxy.HttpProxyMiddleware':None   #110
 }
 
 # Enable or disable extensions

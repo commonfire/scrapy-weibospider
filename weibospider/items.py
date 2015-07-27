@@ -11,6 +11,8 @@ class WeibospiderItem(Item):
     # define the fields for your item here like:
     content = Field()
     time = Field()
+    atuser = Field()
+    repostuser = Field()
     #content_second = Field()
     #time_second = Field()
     #content_third = Field()
