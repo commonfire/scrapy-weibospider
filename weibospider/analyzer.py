@@ -13,7 +13,7 @@ class Analyzer:
         self.follower_list = []     #某用户粉丝列表
         self.follow_list = []       #某用户关注列表
         self.childfollow_list = []  #某子用户关注列表
-	
+        self.userinfo_dict = {}.fromkeys(('昵称：','所在地：','性别：','博客：','个性域名：','简介：','生日：','注册时间：'),' ')
 
 #########################################获取个人主页内容#################################
     def get_mainhtml(self,total): 
@@ -159,8 +159,43 @@ class Analyzer:
         self.childfollow_list = self.get_follower(total_pq)
         return self.childfollow_list
 
-#########################################解析当前关注页面uid##########################################
+#########################################解析微博用户的个人信息##########################################
+    def get_html(self,total,condition):
+        '''获取个人主页中html内容'''
+        total_pq = pq(unicode(total))
+        #获取指定<script>
+        total1 = total_pq(condition).html()
+        #利用正则匹配出大括号内的内容（json串）
+        p=re.compile('{.*}',re.S)
+        match = p.search(unicode(total1))
+        if match:
+            data1=match.group()
+            data2=json.loads(data1)
+            data3=data2['html'].decode('utf-8')
+            total_pq = pq(unicode(data3))
+            return total_pq
+        else:
+            print "gethtml wrong!"                                            
+   
+    
+    
+    def get_userinfohref(self,total_pq):
+        '''获取微博用户的个人信息请求链接'''
+        href = total_pq("div.PCD_person_info").children('a').attr('href')
+        url = "http://weibo.com"+href
+        return url
 
+    def get_userinfo(self,total_pq):
+        '''解析微博用户个人详细信息'''
+        user_li = total_pq("div.WB_innerwrap").eq(0).children(".m_wrap").children("ul").find('li')
+        #user_li = total_pq("div.WB_innerwrap").eq(0).find('i')
+        print '$$$$$$$$$$$$$$outer',user_li.html()
+        for li in user_li:
+            li = pq(li)
+            self.userinfo_dict[li.find('span').eq(0).text()] = li.find('span').eq(1).text()
+            print li.find('span').eq(1).text()
+        return self.userinfo_dict
+            
 
 
 
