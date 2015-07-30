@@ -13,7 +13,7 @@ class Analyzer:
         self.follower_list = []     #某用户粉丝列表
         self.follow_list = []       #某用户关注列表
         self.childfollow_list = []  #某子用户关注列表
-        self.userinfo_dict = {}.fromkeys(('昵称：','所在地：','性别：','博客：','个性域名：','简介：','生日：','注册时间：'),' ')
+        self.userinfo_dict = {}.fromkeys(('昵称：'.decode('utf-8'),'所在地：'.decode('utf-8'),'性别：'.decode('utf-8'),'博客：'.decode('utf-8'),'个性域名：'.decode('utf-8'),'简介：'.decode('utf-8'),'生日：'.decode('utf-8'),'注册时间：'.decode('utf-8')),' ')
 
 #########################################获取个人主页内容#################################
     def get_mainhtml(self,total): 
@@ -188,12 +188,12 @@ class Analyzer:
     def get_userinfo(self,total_pq):
         '''解析微博用户个人详细信息'''
         user_li = total_pq("div.WB_innerwrap").eq(0).children(".m_wrap").children("ul").find('li')
-        #user_li = total_pq("div.WB_innerwrap").eq(0).find('i')
-        print '$$$$$$$$$$$$$$outer',user_li.html()
+        #print '$$$$$$$$$$$$$$outer',user_li.html()
+        print '$$$$$$$$$$$$$$$$$$$$$',self.userinfo_dict.keys()
         for li in user_li:
             li = pq(li)
             self.userinfo_dict[li.find('span').eq(0).text()] = li.find('span').eq(1).text()
-            print li.find('span').eq(1).text()
+            #print li.find('span').eq(1).text()
         return self.userinfo_dict
             
 

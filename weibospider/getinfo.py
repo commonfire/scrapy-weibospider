@@ -19,10 +19,23 @@ def get_user(username):
     return username 
 
 def get_followflag(filename):
-    flag = open(filename).readline()
-    return flag 
+    f = open(filename)
+    tag = 0
+    for line in f:
+        if tag == 0:
+            flag = line.strip()
+            tag += 1
+        else:
+            stopflag = line.strip()
+    return flag,stopflag 
 
-def set_followflag(filename,newflag):
+def set_followflag(filename,newflag,stopflag):
     f = open(filename,'w')
-    f.write(newflag)
-    
+    f.write(newflag+'\n'+stopflag+'\n')
+   
+   
+def get_url(uid):
+    '''获取入口uid的关注列表页面'''
+    url = 'http://weibo.com/p/100505' + str(uid) + '/myfollow?' 
+    return url
+ 

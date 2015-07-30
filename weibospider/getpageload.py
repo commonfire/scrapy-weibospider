@@ -20,6 +20,12 @@ class GetWeibopage:
         'uid':'',
     }
 
+    followdata = {
+        'cfs':'',
+        't':'1',
+        'Pl_Official_RelationMyfollow__104_page':''       
+    }
+    
     def get_firstloadurl(self):
         GetWeibopage.data['pre_page'] = GetWeibopage.data['page']-1
         return urllib.urlencode(GetWeibopage.data)
@@ -30,10 +36,14 @@ class GetWeibopage:
         GetWeibopage.data['pre_page'] = GetWeibopage.data['page']
         return urllib.urlencode(GetWeibopage.data)
 
-    def get_thirdloadurl(url):
+    def get_thirdloadurl(self):
         GetWeibopage.data['count'] = '15'
         GetWeibopage.data['pagebar'] = '1'
         GetWeibopage.data['pre_page'] = GetWeibopage.data['page']
         return urllib.urlencode(GetWeibopage.data)
+
+    def get_followurl(self):
+        return urllib.urlencode(GetWeibopage.followdata)
+
 
 

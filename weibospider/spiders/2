@@ -131,6 +131,7 @@ class WeiboSpider(CrawlSpider):
         total_pq = analyzer.get_followhtml(response.body)
         #item['followuidlist'] = analyzer.get_follow(total_pq) 
         followlist = analyzer.get_follow(total_pq)
+        print 'JJJJJJJJJJJJJJJJJJ',followlist
         #item['userinfo'] = {} 
         oldflag,stopflag= getinfo.get_followflag(WeiboSpider.filename)
 
@@ -160,7 +161,6 @@ class WeiboSpider(CrawlSpider):
                         #当页第三次加载
                         thirdloadurl = mainpageurl + getweibopage.get_thirdloadurl()
                         if int(GetWeibopage.data['pagebar']) == 1 and page == WeiboSpider.page_num-1:    #在最后一页最后一次加载时，获取用户基本信息
-                            print 'hhhhhhhhhhhhhhhhhhhh',followlist
                             yield  Request(url=thirdloadurl,meta={'cookiejar':response.meta['cookiejar'],'item':item,'uid':follow_uid,'followlist':followlist},callback=self.get_userurl)
                             #continue
                         #yield  Request(url=thirdloadurl,meta={'cookiejar':response.meta['cookiejar'],'item':item,'uid':follow_uid},callback=self.parse_thirdload)

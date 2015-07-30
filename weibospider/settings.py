@@ -24,9 +24,9 @@ USER_NAME = '18611240462'
 PASS_WORD = '19911007'
 UID = '2728266823'
 #爬取微博内容页面数
-PAGE_NUM = 1
+PAGE_NUM = 2
 #爬取用户关注列表页面数
-FOLLOW_PAGE_NUM = 5
+FOLLOW_PAGE_NUM = 2
 
 #标记上一次关注用户uid
 FILENAME = './weibospider/followflag.txt'

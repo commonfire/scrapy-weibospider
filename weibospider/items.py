@@ -9,6 +9,7 @@ from  scrapy import Field,Item
 
 class WeibospiderItem(Item):
     # define the fields for your item here like:
+    uid = Field()
     content = Field()
     time = Field()
     atuser = Field()
@@ -19,3 +20,4 @@ class WeibospiderItem(Item):
     #time_second = Field()
     #content_third = Field()
     #time_third = Field()
+
