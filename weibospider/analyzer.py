@@ -187,13 +187,14 @@ class Analyzer:
 
     def get_userinfo(self,total_pq):
         '''解析微博用户个人详细信息'''
-        user_li = total_pq("div.WB_innerwrap").eq(0).children(".m_wrap").children("ul").find('li')
-        #print '$$$$$$$$$$$$$$outer',user_li.html()
-        print '$$$$$$$$$$$$$$$$$$$$$',self.userinfo_dict.keys()
-        for li in user_li:
-            li = pq(li)
-            self.userinfo_dict[li.find('span').eq(0).text()] = li.find('span').eq(1).text()
-            #print li.find('span').eq(1).text()
+        try:
+            user_li = total_pq("div.WB_innerwrap").eq(0).children(".m_wrap").children("ul").find('li')
+            for li in user_li:
+                li = pq(li)
+                self.userinfo_dict[li.find('span').eq(0).text()] = li.find('span').eq(1).text()
+        except Exception,e:
+           raise Exception 
+            
         return self.userinfo_dict
             
 

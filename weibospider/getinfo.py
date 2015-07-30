@@ -32,8 +32,28 @@ def get_followflag(filename):
 def set_followflag(filename,newflag,stopflag):
     f = open(filename,'w')
     f.write(newflag+'\n'+stopflag+'\n')
+
+######################################################
+def get_fuwflag(filename):
+    f = open(filename)
+    tag = 1
+    for line in f:
+        if tag == 1:
+            follow_flag = line.strip()
+            tag += 1
+        if tag == 2:
+            userinfo_flag = line.strip()
+            tag +=1
+        else:
+            weibocontent_flag = line.strip()
+    return follow_flag,userinfo_flag,weibocontent_flag 
+        
+def set_fuwflag(filename,follow_flag,userinfo_flag,weibocontent_flag):
+    f = open(filename,'w')
+    f.write(follow_flag+'\n'+userinfo_flag+'\n'+weibocontent_flag+'\n')
    
-   
+
+
 def get_url(uid):
     '''获取入口uid的关注列表页面'''
     url = 'http://weibo.com/p/100505' + str(uid) + '/myfollow?' 
