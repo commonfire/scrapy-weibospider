@@ -20,16 +20,14 @@ MYSQL_DBNAME = 'weiboanalysis'
 MYSQL_USER = 'root'
 MYSQL_PASSWD = 'root'
 
-USER_NAME = '18611240462'
+USER_NAME = '18600299007'
 PASS_WORD = '19911007'
-UID = '2728266823'
+UID = '3655612552'
 #爬取微博内容页面数
 PAGE_NUM = 2
 #爬取用户关注列表页面数
-FOLLOW_PAGE_NUM = 2
+FOLLOW_PAGE_NUM = 5
 
-#标记上一次关注用户uid
-FILENAME = './weibospider/followflag.txt'
 
 
 USER_AGENTS = [
@@ -68,7 +66,7 @@ PROXIES = [
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY=1.5
+DOWNLOAD_DELAY=10
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN=16
 #CONCURRENT_REQUESTS_PER_IP=16

@@ -89,7 +89,7 @@ class WeiboSpider(CrawlSpider):
         conn = db.get_connection()
         sql = "select * from t_user_follow where infostate = 0"
         cursor = db.select_operation(conn,sql)
-        for i in range(20):
+        for i in range(30):
             for result in cursor.fetchmany(5):
                 if result[1]:
                     mainpageurl = 'http://weibo.com/u/'+str(result[1])+'?from=otherprofile&wvr=3.6&loc=tagweibo'

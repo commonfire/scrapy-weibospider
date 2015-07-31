@@ -38,7 +38,7 @@ class WeibospiderPipeline(object):
     def process_item(self,item,spider):
         if spider.name == 'weibocontent':
             d = self.dbpool.runInteraction(self._weibocontent_insert,item,spider)  
-        elif:spider.name == 'userfollow':
+        elif spider.name == 'userfollow':
             d = self.dbpool.runInteraction(self._userfollow_insert,item,spider)  
         else:
             d = self.dbpool.runInteraction(self._userinfo_insert,item,spider)  
@@ -59,7 +59,7 @@ class WeibospiderPipeline(object):
                 conn.execute("insert into t_user_weibo(userID,content,time,atuser,repostuser) values(%s,%s,%s,%s,%s)",(str(item['uid']),content_tmp,item['time'][i],item['atuser'][i],item['repostuser'][i]))
             else:
                 conn.execute("insert into t_user_weibo(userID,content,time,atuser,repostuser) values(%s,%s,%s,%s,%s)",(str(item['uid']),item['content'][i],item['time'][i],item['atuser'][i],item['repostuser'][i]))
-            conn.execute("update t_user_follow set contentstate=1 where followID = "+item['uid'])
+        conn.execute("update t_user_follow set contentstate=1 where followID = "+item['uid'])
 
     def _userinfo_insert(self,conn,item,spider):
        #将微博用户个人信息插入数据库 
