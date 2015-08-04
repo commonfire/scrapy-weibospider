@@ -87,10 +87,15 @@ class WeiboSpider(CrawlSpider):
     def get_userinfo(self,response):
         db = MysqlStore()
         conn = db.get_connection()
-        sql = "select * from t_user_follow where infostate = 0"
-        cursor = db.select_operation(conn,sql)
-        for i in range(30):
-            for result in cursor.fetchmany(5):
+        sql1 = "select * from t_user_follow where infostate = 0 and contentstate = 0"
+        cursor1 = db.select_operation(conn,sql1)
+
+        sql2 = "select count(*) from t_user_follow where infostate = 0 and contentstate = 0"
+        cursor2 = db.select_operation(conn,sql2)
+        count = cursor2.fetchone()
+
+        for i in range(count[0]):
+            for result in cursor1.fetchmany(1):
                 if result[1]:
                     mainpageurl = 'http://weibo.com/u/'+str(result[1])+'?from=otherprofile&wvr=3.6&loc=tagweibo'
                     GetWeibopage.data['uid'] = result[1]

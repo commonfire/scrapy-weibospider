@@ -48,7 +48,7 @@ class WeibospiderPipeline(object):
 
     def _userfollow_insert(self,conn,item,spider): 
         for i in range(len(item['followuidlist'])):
-            conn.execute("replace into t_user_follow(userID,followID,infostate,contentstate) values(%s,%s,%s,%s)",(str(WeibospiderPipeline.start_uid),item['followuidlist'][i],0,0))
+            conn.execute("insert ignore t_user_follow(userID,followID,infostate,contentstate) values(%s,%s,%s,%s)",(str(WeibospiderPipeline.start_uid),item['followuidlist'][i],0,0))
 
     def _weibocontent_insert(self,conn,item,spider):
         #if item.get('content') and item.get('time'):
