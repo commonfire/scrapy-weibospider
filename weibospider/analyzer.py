@@ -38,9 +38,39 @@ class Analyzer:
         data = total_pq("div[node-type=feed_list_content]")
         for d in data :
             d = pq(d)
-            content = d.contents()[0].strip()
-            self.content_list.append(content)
+            if '//' in d.text():   #用户发表微博存在转发情况
+                print '~~~~~~~~~~~~~~~~///////yes!!!!!'
+                p1=re.compile('(.*?)\s?//\s?<a',re.S)
+                match = p1.search(d.html())
+                if match:
+                    data_pq = pq(match.group(1))
+                    content = self.get_content_src(data_pq)
+                    self.content_list.append(content)
+                else:
+                    print "getcontent wrong"
+            else: #用户直接发表微博，没有转发情况
+                content = self.get_content_src(d)                
+                self.content_list.append(content)
+            #content = d.contents()[0].strip()
+            #self.content_list.append(content)
         return self.content_list
+
+    def get_content_src(self,data_pq):
+        '''获取用户发表微博数据，包括表情符号'''
+        content = []
+        for i,item in enumerate(list(data_pq.contents())):
+            if 'Element img' not in str(item) and 'Element a' not in str(item):  #不包含表情标签img和链接标签a
+                content.append(str(item).strip())
+                #print '+++++++++',str(i)+str(item).strip()
+            elif 'img' in str(item):
+                parents = pq(item).outerHtml()
+                if pq(parents).attr("title")==None:
+                    print 'image error'
+                else:
+                    content.append(pq(parents).attr("title"))
+        #print '%%%%%%%%%%%%%%%',''.join(content)
+        return ''.join(content)
+
 	
     def get_time(self,total_pq):
         '''获取用户发表微博时间'''
@@ -57,7 +87,6 @@ class Analyzer:
         user = total_pq('div[node-type=feed_list_content]')
         for au in user:
             au = pq(au)
-            #text_list = au.text().split()  #根据空格分割
             if '//' in au.text():     #存在转发可能
                 p1 = re.compile('(<a.*?</a>)\s?//',re.S)
                 match1 = p1.search(au.html())
@@ -74,9 +103,8 @@ class Analyzer:
                 else:
                     self.repostuser_list.append('')
 
-            else: 
+            else:    #用户没有转发，直接发表微博 
                 atuser_list1 = au.find('a').text()   #记录用户微博中的@用户
-                #self.atuser_list.append([atuser_item[1:] for atuser_item in atuser_list1])
                 self.atuser_list.append(atuser_list1)
                 
                 repostuser = au.parents('div.WB_detail')  #记录微博用户中的@用户，情况2：直接转发者
@@ -196,10 +224,3 @@ class Analyzer:
            raise Exception 
             
         return self.userinfo_dict
-            
-
-
-
-
-
-
