@@ -35,8 +35,6 @@ class WeiboSpider(CrawlSpider):
 
     def post_requests(self,response):
         serverdata = re.findall('{"retcode":0,"servertime":(.*?),"pcid":.*?,"nonce":"(.*?)","pubkey":"(.*?)","rsakv":"(.*?)","exectime":.*}',response.body,re.I)[0]  #获取get请求的数据，用于post请求登录
-        #print '!!!!GET responsebody:',response.body
-        #print '!!!!serverdata',serverdata[0]
         servertime = serverdata[0]
         nonce = serverdata[1]
         pubkey = serverdata[2]
@@ -67,11 +65,9 @@ class WeiboSpider(CrawlSpider):
 
      
     def get_cookie(self, response):
-        #print 'response:~~~~~~~~~~~~~~~',response.body
         p = re.compile('location\.replace\(\'(.*)\'\)')
         try:
             login_url = p.search(response.body).group(1)
-            #print '==============',login_url 
             ret_res = re.search('retcode=0',login_url)
             if ret_res:
                 print 'Login Success!!!!'
@@ -87,22 +83,23 @@ class WeiboSpider(CrawlSpider):
     def get_userinfo(self,response):
         db = MysqlStore()
         conn = db.get_connection()
-        sql1 = "select * from t_user_follow where infostate = 0 and contentstate = 0"
+        #sql1 = "select * from t_user_follow where infostate = 0 and contentstate = 0"
+        sql1 = "select * from t_user_info where imagestate = 0"
         cursor1 = db.select_operation(conn,sql1)
 
         sql2 = "select count(*) from t_user_follow where infostate = 0 and contentstate = 0"
         cursor2 = db.select_operation(conn,sql2)
         count = cursor2.fetchone()
 
-        for i in range(count[0]):
+        for i in range(10):     #count[0]):
             for result in cursor1.fetchmany(1):
-                if result[1]:
-                    mainpageurl = 'http://weibo.com/u/'+str(result[1])+'?from=otherprofile&wvr=3.6&loc=tagweibo'
-                    GetWeibopage.data['uid'] = result[1]
+                if result[0]:
+                    mainpageurl = 'http://weibo.com/u/'+str(result[0])+'?from=otherprofile&wvr=3.6&loc=tagweibo'
+                    GetWeibopage.data['uid'] = result[0]   #result[1]
                     getweibopage = GetWeibopage()
                     GetWeibopage.data['page'] = 1
                     firstloadurl = mainpageurl + getweibopage.get_firstloadurl()
-                    yield  Request(url=firstloadurl,meta={'cookiejar':response.meta['cookiejar'],'uid':result[1]},callback=self.get_userurl)
+                    yield  Request(url=firstloadurl,meta={'cookiejar':response.meta['cookiejar'],'uid':result[0]},callback=self.get_userurl)
 
     def get_userurl(self,response):
         analyzer = Analyzer()
@@ -113,11 +110,15 @@ class WeiboSpider(CrawlSpider):
     def parse_userinfo(self,response):
         item = WeibospiderItem() 
         analyzer = Analyzer()
-        try:
-            total_pq = analyzer.get_html(response.body,'script:contains("PCD_text_b")') 
-            item['userinfo'] = analyzer.get_userinfo(total_pq)
-        except Exception,e:
-            item['userinfo'] = {}.fromkeys(('昵称：'.decode('utf-8'),'所在地：'.decode('utf-8'),'性别：'.decode('utf-8'),'博客：'.decode('utf-8'),'个性域名：'.decode('utf-8'),'简介：'.decode('utf-8'    ),'生日：'.decode('utf-8'),'注册时间：'.decode('utf-8')),' ')   
+       # try:
+        total_pq1 = analyzer.get_html(response.body,'script:contains("pf_photo")')
+        item['image_urls'] = analyzer.get_userphoto_url(total_pq1)
+
+            #total_pq2 = analyzer.get_html(response.body,'script:contains("PCD_text_b")') 
+            #item['userinfo'] = analyzer.get_userinfo(total_pq2)
+        #except Exception,e:
+            #item['userinfo'] = {}.fromkeys(('昵称：'.decode('utf-8'),'所在地：'.decode('utf-8'),'性别：'.decode('utf-8'),'博客：'.decode('utf-8'),'个性域名：'.decode('utf-8'),'简介：'.decode('utf-8'    ),'生日：'.decode('utf-8'),'注册时间：'.decode('utf-8')),' ')   
+            #item['image_urls'] = ' '
         item['uid'] = response.meta['uid']
         return item
 ######################################################################

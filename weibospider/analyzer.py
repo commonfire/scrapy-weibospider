@@ -39,13 +39,16 @@ class Analyzer:
         for d in data :
             d = pq(d)
             if '//' in d.text():   #用户发表微博存在转发情况
-                print '~~~~~~~~~~~~~~~~///////yes!!!!!'
                 p1=re.compile('(.*?)\s?//\s?<a',re.S)
                 match = p1.search(d.html())
                 if match:
-                    data_pq = pq(match.group(1))
-                    content = self.get_content_src(data_pq)
-                    self.content_list.append(content)
+                    if(match.group(1).strip() == ''):
+                        self.content_list.append('')
+                    #print '////////////',match.group(1).strip()
+                    else:
+                        data_pq = pq(match.group(1))
+                        content = self.get_content_src(data_pq)
+                        self.content_list.append(content)
                 else:
                     print "getcontent wrong"
             else: #用户直接发表微博，没有转发情况
@@ -59,7 +62,7 @@ class Analyzer:
         '''获取用户发表微博数据，包括表情符号'''
         content = []
         for i,item in enumerate(list(data_pq.contents())):
-            if 'Element img' not in str(item) and 'Element a' not in str(item):  #不包含表情标签img和链接标签a
+            if 'Element img' not in str(item) and 'Element a' not in str(item) and 'Element span' not in str(item):  #不包含表情标签img和链接标签a
                 content.append(str(item).strip())
                 #print '+++++++++',str(i)+str(item).strip()
             elif 'img' in str(item):
@@ -224,3 +227,13 @@ class Analyzer:
            raise Exception 
             
         return self.userinfo_dict
+
+    def get_userphoto_url(self,total_pq):
+        '''获取微博用户头像的url地址'''
+        url = total_pq("div.pf_photo").find('img').attr('src')
+        return url
+
+
+
+
+

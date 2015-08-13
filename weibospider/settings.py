@@ -13,23 +13,30 @@ BOT_NAME = 'weibospider'
 
 SPIDER_MODULES = ['weibospider.spiders']
 NEWSPIDER_MODULE = 'weibospider.spiders'
-ITEM_PIPELINES={'weibospider.pipelines.WeibospiderPipeline':300}
+ITEM_PIPELINES={'weibospider.pipelines.WeibospiderPipeline':300,
+                'weibospider.user_imagepipelines.UserImagesPipeline':1}
+                #'scrapy.piplines.images.ImagesPipline':1}
 
+#Mysql数据库配置
 MYSQL_HOST = 'localhost'
 MYSQL_DBNAME = 'weiboanalysis'
 MYSQL_USER = 'root'
 MYSQL_PASSWD = 'root'
 
+#微博爬取内容配置
 USER_NAME = '18600299007'
 PASS_WORD = '19911007'
 UID = '3655612552'
-#爬取微博内容页面数
-PAGE_NUM = 2
-#爬取用户关注列表页面数
-FOLLOW_PAGE_NUM = 5
+PAGE_NUM = 2   #爬取微博内容页面数
+
+FOLLOW_PAGE_NUM = 5  #爬取用户关注列表页面数
+
+#图片下载配置
+IMAGES_STORE = '/home/zjd/scrapy-weibospider/weibospider/userphoto'  #图片存储位置
+IMAGES_EXPIRES = 30          #图片失效期限天数
 
 
-
+#User-Agent 或代理IP轮换
 USER_AGENTS = [
     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; Acoo Browser; SLCC1; .NET CLR 2.0.50727; Media Center PC 5.0; .NET CLR 3.0.04506)",
@@ -66,7 +73,7 @@ PROXIES = [
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-DOWNLOAD_DELAY=10
+DOWNLOAD_DELAY = 10
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN=16
 #CONCURRENT_REQUESTS_PER_IP=16

@@ -93,7 +93,7 @@ class WeiboSpider(CrawlSpider):
         sql2 = "select count(*) from t_user_follow where contentstate = 0"
         cursor2 = db.select_operation(conn,sql2)
         count = cursor2.fetchone()
-        for i in range(count[0]):  #count[0]为需要再爬取的微博数
+        for i in range(10):        #(count[0]):  #count[0]为需要再爬取的用户数
             for result in cursor1.fetchmany(1):
                 if result[1]:
                     mainpageurl = 'http://weibo.com/u/'+str(result[1])+'?from=otherprofile&wvr=3.6&loc=tagweibo'

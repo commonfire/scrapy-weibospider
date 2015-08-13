@@ -16,8 +16,6 @@ class WeibospiderItem(Item):
     repostuser = Field()
     followuidlist = Field()
     userinfo =Field()
-    #content_second = Field()
-    #time_second = Field()
-    #content_third = Field()
-    #time_third = Field()
-
+    
+    image_urls = Field()
+    images = Field()
