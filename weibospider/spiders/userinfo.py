@@ -84,14 +84,14 @@ class WeiboSpider(CrawlSpider):
         db = MysqlStore()
         conn = db.get_connection()
         #sql1 = "select * from t_user_follow where infostate = 0 and contentstate = 0"
-        sql1 = "select * from t_user_info where imagestate = 0"
+        sql1 = "select * from t_user_info where imagestate = 1 and imageurl = 1"
         cursor1 = db.select_operation(conn,sql1)
 
         sql2 = "select count(*) from t_user_follow where infostate = 0 and contentstate = 0"
         cursor2 = db.select_operation(conn,sql2)
         count = cursor2.fetchone()
 
-        for i in range(50):     #count[0]):
+        for i in range(1):     #count[0]):
             for result in cursor1.fetchmany(1):
                 if result[0]:
                     mainpageurl = 'http://weibo.com/u/'+str(result[0])+'?from=otherprofile&wvr=3.6&loc=tagweibo'

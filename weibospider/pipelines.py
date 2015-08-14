@@ -65,13 +65,12 @@ class WeibospiderPipeline(object):
     def _userinfo_insert(self,conn,item,spider):
        #将微博用户个人信息插入数据库 
         #conn.execute("insert into t_user_info(userID,userAlias,location,sex,blog,domain,brief,birthday,registertime) values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(str(item['uid']),item['userinfo']['昵称：'.decode('utf-8')],item['userinfo']['所在地：'.decode('utf-8')],item['userinfo']['性别：'.decode('utf-8')],item['userinfo']['博客：'.decode('utf-8')],item['userinfo'.decode('utf-8')]['个性域名：'.decode('utf-8')],item['userinfo']['简介：'.decode('utf-8')],item['userinfo']['生日：'.decode('utf-8')],item['userinfo']['注册时间：'.decode('utf-8')]))
-      
-        p = re.compile('.cn/(\d*?)/')
-        match = p.search(item['image_urls'])
-        if(match):
-             conn.execute("update t_user_info set imageurl = %s where userID = %s",("image/userphoto/"+match.group(1)+".jpg",str(item['uid'])))
+        
+        if 'png' not in item['image_urls']: 
+            conn.execute("update t_user_info set imageurl = %s where userID = %s",("image/userphoto/"+str(item['uid'])+".jpg",str(item['uid'])))
         else:
-            print "image_name wrong!!"
+            tmp = item['image_urls']
+            conn.execute("update t_user_info set imageurl = %s where userID = %s",("image/userphoto/"+tmp[tmp.rindex('/')+1:tmp.rindex('.')]+".jpg",str(item['uid'])))
         conn.execute("update t_user_info set imagestate = 1 where userID = "+str(item['uid']))
         #conn.execute("update t_user_follow set infostate=1 where followID = "+item['uid'])
 

@@ -33,8 +33,8 @@ FOLLOW_PAGE_NUM = 5  #爬取用户关注列表页面数
 
 #图片下载配置
 IMAGES_STORE = '/home/zjd/scrapy-weibospider/weibospider/userphoto'  #图片存储位置
-IMAGES_EXPIRES = 30          #图片失效期限天数
-
+IMAGES_EXPIRES = 90          #图片失效期限天数
+IMAGES_THUMBS = {'small':(50,50)}  #设置图片缩略图长和宽度
 
 #User-Agent 或代理IP轮换
 USER_AGENTS = [

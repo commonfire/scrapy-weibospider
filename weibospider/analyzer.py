@@ -209,7 +209,6 @@ class Analyzer:
             print "gethtml wrong!"                                            
    
     
-    
     def get_userinfohref(self,total_pq):
         '''获取微博用户的个人信息请求链接'''
         href = total_pq("div.PCD_person_info").children('a').attr('href')
