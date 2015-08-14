@@ -18,4 +18,3 @@ class WeibospiderItem(Item):
     userinfo =Field()
     
     image_urls = Field()
-    images = Field()

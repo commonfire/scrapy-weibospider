@@ -91,7 +91,7 @@ class WeiboSpider(CrawlSpider):
         cursor2 = db.select_operation(conn,sql2)
         count = cursor2.fetchone()
 
-        for i in range(10):     #count[0]):
+        for i in range(50):     #count[0]):
             for result in cursor1.fetchmany(1):
                 if result[0]:
                     mainpageurl = 'http://weibo.com/u/'+str(result[0])+'?from=otherprofile&wvr=3.6&loc=tagweibo'
