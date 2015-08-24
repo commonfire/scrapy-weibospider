@@ -14,6 +14,7 @@ class Analyzer:
         self.follow_list = []       #某用户关注列表
         self.childfollow_list = []  #某子用户关注列表
         self.userinfo_dict = {}.fromkeys(('昵称：'.decode('utf-8'),'所在地：'.decode('utf-8'),'性别：'.decode('utf-8'),'博客：'.decode('utf-8'),'个性域名：'.decode('utf-8'),'简介：'.decode('utf-8'),'生日：'.decode('utf-8'),'注册时间：'.decode('utf-8')),' ')
+        self.keyuserid = []         #与某关键词相关的用户uid
 
 #########################################获取个人主页内容#################################
     def get_mainhtml(self,total): 
@@ -44,7 +45,6 @@ class Analyzer:
                 if match:
                     if(match.group(1).strip() == ''):
                         self.content_list.append('')
-                    #print '////////////',match.group(1).strip()
                     else:
                         data_pq = pq(match.group(1))
                         content = self.get_content_src(data_pq)
@@ -54,25 +54,21 @@ class Analyzer:
             else: #用户直接发表微博，没有转发情况
                 content = self.get_content_src(d)                
                 self.content_list.append(content)
-            #content = d.contents()[0].strip()
-            #self.content_list.append(content)
         return self.content_list
 
     def get_content_src(self,data_pq):
         '''获取用户发表微博数据，包括表情符号'''
         content = []
-        for i,item in enumerate(list(data_pq.contents())):
+        for item in list(data_pq.contents()):
             if 'Element img' not in str(item) and 'Element a' not in str(item) and 'Element span' not in str(item):  #不包含表情标签img和链接标签a
                 content.append(str(item).strip())
-                #print '+++++++++',str(i)+str(item).strip()
             elif 'img' in str(item):
                 parents = pq(item).outerHtml()
                 if pq(parents).attr("title")==None:
-                    print 'image error'
+                    print 'image error'  #此时不是新浪系统的img，是用户发的手机内置表情
                 else:
                     content.append(pq(parents).attr("title"))
-        #print '%%%%%%%%%%%%%%%',''.join(content)
-        return ''.join(content)
+        return ''.join(content) #content列表转换为字符串
 
 	
     def get_time(self,total_pq):
@@ -232,6 +228,19 @@ class Analyzer:
         url = total_pq("div.pf_photo").find('img').attr('src')
         return url
 
+    def get_keyuser(self,total_pq):
+        '''获取关键词相关用户uid'''
+        data = total_pq("div.feed_content")
+        for dku in data:
+            dku = pq(dku)
+            href = dku.find('a').eq(0).attr('usercard')
+            p = re.compile("id=(\d*)&",re.S)
+            match = p.search(unicode(href))
+            if match:
+                  self.keyuserid.append(match.group(1))
+            else:
+                print "get_keyuser wrong!!"
+        return self.keyuserid
 
 
 

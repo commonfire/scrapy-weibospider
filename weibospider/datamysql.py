@@ -31,7 +31,7 @@ class MysqlStore:
         cur.execute('set character_set_connection=utf8;')
         cur.execute(sql)
         print 'insertion success!!'
-
+        self.close_connection(cur,conn)
 
     def select_operation(self,conn,sql):
         '''从数据库中选择出数据'''
